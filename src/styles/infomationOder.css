@@ -1,0 +1,134 @@
+.informationOder  {
+    padding: 50px 80px;
+    background-color: #d9d9d9;
+    margin: 0 120px;
+}
+
+.informationOder-infor-container{
+    background-color: white;
+    padding: 8px;
+    margin-top: 40px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 8px #a29797
+
+}
+.informationOder-product-container{
+    box-shadow: 1px 1px 8px #a29797;
+    border-radius: 5px;
+    padding: 25px 15px;
+    background-color: white;
+    margin-top: 30px;
+
+}
+.informationOder-infor-container-head{
+    display: flex;
+    align-items: center;
+}
+.informationOder-infor-container-body{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 40px;
+}
+.informationOder-infor-container-body-name{
+    width: 50%;
+    padding: 10px 0;
+}
+.InfomationCard{
+    margin-bottom: 10px;
+    background-color: #F7F6F6;
+    display: flex;
+    /* justify-content: space-between; */
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+}
+.InfomationCard-img{
+    width: 150px;
+    border-radius: 3px;
+    height: 100px;
+    /* object-fit: cover; */
+}
+.InfomationCard-brand{
+    font-weight: 800;
+    font-size: 20px;
+    width: 135px;
+    margin-left: 7%;
+}
+.informationOder-product-container-total-price{
+    display: flex;
+    justify-content: end;
+}
+.informationOder-product-container-total-price_name{
+    font-weight: 800;
+}
+.informationOder-product-container-total-price_price{
+    font-size: 20px;
+    font-weight: 600;
+    color: red;
+    margin-left: 50px;
+}
+.informationOder-product-container-payment{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.informationOder-product-container-payment-name{
+    display: flex;
+    align-items: center;
+}
+.oder-succ{
+    padding: 50px 80px;
+    background-color: #d9d9d9;
+}
+.oder-succ-container{
+    margin: 50px 120px 0;
+    border-radius: 5px;
+    box-shadow: 1px 1px 8px #a29797;
+    padding: 10px 20px;
+}
+.oder-succ-container-name{
+    font-size: 24px;
+    text-align: center;
+    font-weight: 800;
+}
+.oder-succ-container-body{
+    background-color: white;
+    padding: 20px;
+    border-right:5px;
+    margin: 20px 0;
+}
+.oder-succ-container-body-name{
+    margin-bottom: 20px;
+    font-size: 17px;
+}
+.oder-succ-container-body-pay{
+    margin-top: 20px;
+    border-top:1.5px solid black;
+    border-bottom:1.5px solid black;
+}
+.oder-succ-container-body-pay-total{
+    display: flex;
+    justify-content: space-between;
+}
+.oder-succ-container-body-pay-total-name{
+    padding: 20px 0;
+}
+.oder-succ-container-body-pay-total-price{
+    color: red;
+    font-weight: 700;
+}
+.oder-succ-container-body-footer{
+    margin-top: 10px;
+}
+.hiden{
+    overflow: auto;
+    max-height: 400px;
+}
+.InfomationCard-price{
+    width: 20%;
+    
+}
+.InfomationCard-totalPrice{
+    margin-left: auto;
+}

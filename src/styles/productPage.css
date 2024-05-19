@@ -1,0 +1,96 @@
+
+
+.ProductPage-container{
+    padding:50px 70px;
+    max-height: 100%;
+    background-color: #d9d9d9;
+}
+.ProductPage-name{
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.ProductPage-total-filter{
+    margin-left: auto;
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin-top: 70px;
+}
+.ProductPage-total{
+    font-size: 18px;
+    font-weight: 700;
+}
+.ProductPage-filter{
+
+}
+.ProductPage-content{
+    margin-top: 20px;
+    display: flex;
+}
+.ProductPage-filter-name{
+    padding-right:7px ;
+    font-size: 16px;
+}
+.ProductPage-content-filter{
+    width: 20%;
+    background-color: white;
+    padding: 10px;
+    min-height: 370px;
+    border-radius: 3px;
+    max-height: 400px;
+    margin: -58px 5px 0 -5px;
+}
+.ProductPage-content-filter-name{
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+}
+.ProductPage-content-filter-container{
+    background-color: #D9D9D9;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 5px;
+}
+.ProductPage-content-filter-items-name{
+    font-size: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ProductPage-content-filter-items-name-icon{
+    font-size: 16px;
+}
+.ProductPage-content-filter-list{
+    list-style-type: disc;
+    padding-left: 30px;
+    transition: transform 0.5s ease; /* Sử dụng transition với thuộc tính transform */
+    transform: translateY(-100%);
+    display: none;
+}
+.ProductPage-content-filter-list.open{
+    transform: translateY(0%);
+    display: block;
+
+}
+.ProductPage-content-filter-items{
+    cursor: pointer;
+    font-weight: 300;
+}
+.ProductPage-content-main{
+    max-width: 110%;
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-around; */
+}
+.ProductPage-line{
+    display: inline-block;
+     width: 500px;
+     background-color: black;
+     height: 5px;
+}
