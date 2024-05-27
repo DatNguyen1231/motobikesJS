@@ -134,8 +134,8 @@ const Profile = () => {
                                                     label="Email"
                                                     value={userData?.email}
                                                     isEditable={editStates.email}
-                                                    onChange={(e) => handleChange('Email', e.target.value)}
-                                                    toggleEdit={() => handleEditClick('Email')}
+                                                    onChange={(e) => handleChange('email', e.target.value)}
+                                                    toggleEdit={() => handleEditClick('email')}
                                                 />
                                                 <InputProfileField
                                                     id="address"

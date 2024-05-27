@@ -7,7 +7,8 @@ import { AuthContext } from '@/context/AuthContext';
 import UpdateProducts from '@/components/AdminProducts/UpdateProducts';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ApproveOrders from '@/components/AdminProducts/ApproveOrders';
-
+import RevenueStatistics from '@/components/AdminProducts/RevenueStatistics';
+import CustomerManagerment from '@/components/AdminProducts/CustomerManagement';
 const AdminPage = () => {
     const [showOptions, setShowOptions] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -50,7 +51,7 @@ const AdminPage = () => {
         <ProtectedRoute>
             <div className="min-h-screen flex flex-col">
                 {/* Navbar */}
-                <nav className="flex justify-between items-center bg-[#2B92E4] text-white p-4">
+                <nav className="flex justify-between items-center bg-blue-500 text-white p-4">
                     <Link href={'/'}>
                         <div className="mr-4 block cursor-pointer py-1.5 font-sans text-base font-medium leading-relaxed text-inherit antialiased">
                             Motorbike Ecommerce
@@ -64,23 +65,20 @@ const AdminPage = () => {
                 </nav>
 
                 {/* Body */}
-                <div className="flex flex-1 bg-[#EAEAEA]">
+                <div className="flex flex-1 bg-gray-200">
                     {/* Sidebar */}
-                    <div className="w-60 bg-[#2B92E4]">
-                        <ul className="text-white">
-
-                             <li
-                               
-                                className="ml-4 text-lg font-semibold cursor-pointer"
+                    <div className="w-60 bg-blue-500 text-white">
+                        <ul>
+                            <li
+                                className="ml-4 text-lg font-semibold cursor-pointer py-2"
                                 onClick={(e) => handleContentChange('approveOrders', e)}
                             >
                                 Duyệt đơn hàng
                             </li>
 
                             <li
-                                className={`text-lg font-semibold cursor-pointer p-4 ${
-                                    selectedItem === 'products' ? 'bg-[#9ECEE8]' : ''
-                                }`}
+                                className={`text-lg font-semibold cursor-pointer px-4 py-2 ${selectedItem === 'products' ? 'bg-blue-600' : ''
+                                    }`}
                                 onClick={handleToggleOptions}
                             >
                                 <div className="flex items-center justify-between">
@@ -88,35 +86,46 @@ const AdminPage = () => {
                                     {showOptions ? <FaChevronDown /> : <FaChevronRight />}
                                 </div>
                                 {showOptions && (
-                                    <ul className="ml-4 mt-2 text-base">
+                                    <ul className="ml-4 mt-2">
                                         <li
-                                            className="mt-2 hover:text-gray-300"
+                                            className="hover:text-gray-300 py-2"
                                             onClick={(e) => handleContentChange('products', e)}
                                         >
                                             Danh sách sản phẩm
                                         </li>
                                         <li
-                                            className="mt-2 hover:text-gray-300"
+                                            className="hover:text-gray-300 py-2"
                                             onClick={(e) => handleContentChange('addProduct', e)}
                                         >
                                             Thêm sản phẩm
                                         </li>
-                                        <li onClick={(e) => handleContentChange('updateProduct', e)}></li>
                                     </ul>
                                 )}
+                            </li>
+                            <li
+                                className="ml-4 text-lg font-semibold cursor-pointer py-2"
+                                onClick={(e) => handleContentChange('revenueStatistics', e)}
+                            >
+                                Danh thu
+                            </li>
+                            <li
+                                className="ml-4 text-lg font-semibold cursor-pointer py-2"
+                                onClick={(e) => handleContentChange('customerManagerment', e)}
+                            >
+                                Quản lý khách hàng
                             </li>
                             <li
                                 onClick={() => {
                                     handleLogout();
                                 }}
-                                className="ml-4 text-lg font-semibold cursor-pointer"
+                                className="ml-4 text-lg font-semibold cursor-pointer py-2"
                             >
                                 Đăng xuất
                             </li>
                         </ul>
                     </div>
 
-                     {/* Content */}
+                    {/* Content */}
                     <div className="flex-1 p-4 overflow-auto">
                         {activeContent === 'products' ? (
                             <ContentProducts activeContent={activeContent} changeContent={changeContent} />
@@ -129,10 +138,12 @@ const AdminPage = () => {
                                 changeContent={changeContent}
                             />
                         ) : activeContent === 'approveOrders' ? (
-                            // Hiển thị danh sách đơn hàng cần duyệt
                             <ApproveOrders activeContent={activeContent} changeContent={changeContent} />
-                        )
-                        : (
+                        ) : activeContent === 'customerManagerment' ? (
+                            <CustomerManagerment activeContent={activeContent} changeContent={changeContent} />
+                        ) : activeContent === 'revenueStatistics' ? (
+                            <RevenueStatistics activeContent={activeContent} changeContent={changeContent} />
+                        ) : (
                             <div className="text-center text-lg">Đây là Admin Page</div>
                         )}
                     </div>

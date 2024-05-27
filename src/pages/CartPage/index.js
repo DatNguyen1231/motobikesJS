@@ -2,13 +2,20 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { AiTwotoneShop } from 'react-icons/ai';
 import { FaCheck } from 'react-icons/fa6';
-import { getCartByUser } from '@/pages/api/api';
+import { getCartByUser, getUserInfo, updateUserAccount } from '@/pages/api/api';
 import axiosInstance from '@/pages/api/axios';
 import { FaExclamation } from 'react-icons/fa6';
-
+import { InputProfileField } from '@/components/constants/Input';
 const CartPage = () => {
     const router = useRouter();
     const [cartProducts, setCartProducts] = useState([]);
+    const [userData, setUserData] = useState({
+        fullName: '',
+        phoneNumber: '',
+        email: '',
+        address: '',
+        password: '',
+    });
     const [totalPrice, setTotalPrice] = useState(0);
     const [fullName, setFullName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -16,7 +23,21 @@ const CartPage = () => {
     const [address, setAddress] = useState('');
     const [content, setContent] = useState('');
     const [errors, setErrors] = useState({});
+    const [editStates, setEditStates] = useState({
+        fullName: false,
+        phoneNumber: false,
+        email: false,
+        address: false,
+        password: false,
+    });
 
+    const handleEditClick = (field) => {
+        setEditStates((prev) => ({ ...prev, [field]: !prev[field] }));
+    };
+
+    const handleChange = (field, value) => {
+        setUserData((prev) => ({ ...prev, [field]: value }));
+    };
     // Fetch Cart Products
     useEffect(() => {
         const fetchCartProducts = async () => {
@@ -36,8 +57,20 @@ const CartPage = () => {
                 console.error('Có lỗi đã xảy ra:', error);
             }
         };
+        const fetchUserInfo = async () => {
+            const response = await getUserInfo();
+            if (response.success) {
+                setUserData(response.data);
+            } else {
+                console.error(response.message);
+            }
+        };
+
+        fetchUserInfo();
         fetchCartProducts();
     }, []);
+
+
 
     // Update Total Price
     const updateTotalPrice = (products) => {
@@ -96,23 +129,25 @@ const CartPage = () => {
             } else {
                 throw new Error('Có lỗi đã xảy ra:');
             }
-        } catch (error) {}
+        } catch (error) { }
     };
+    //cập nhật thông tin khách hàng
+    const handleUpdateUser = async (e) => {
+        e.preventDefault();
+        const response = await updateUserAccount(userData);
+        if (response.success) {
+            // Alert user of successful update
+            alert('Cập nhật thông tin thành công!');
 
-    const handleFullNameChange = (e) => {
-        setFullName(e.target.value);
-        if (errors.fullName) {
-            setErrors({ ...errors, fullName: '' });
-        }
-    };
-
-    const handlePhoneNumberChange = (e) => {
-        const value = e.target.value;
-        if (value === '' || /^[0-9\b]+$/.test(value)) {
-            setPhoneNumber(value);
-            if (errors.phoneNumber) {
-                setErrors({ ...errors, phoneNumber: '' });
-            }
+            setEditStates({
+                fullName: false,
+                phoneNumber: false,
+                email: false,
+                address: false,
+                password: false,
+            });
+        } else {
+            alert('Có lỗi xảy ra khi cập nhật thông tin!');
         }
     };
 
@@ -120,32 +155,7 @@ const CartPage = () => {
         if (cartProducts.length === 0) {
             return;
         }
-        const errors = {};
-
-        if (!fullName.trim()) {
-            errors.fullName = 'Bạn phải nhập họ và tên';
-        }
-
-        if (!phoneNumber.trim()) {
-            errors.phoneNumber = 'Bạn phải nhập số điện thoại';
-        } else if (phoneNumber.trim().length !== 10) {
-            errors.phoneNumber = 'Số điện thoại phải 10 số';
-        }
-
-        setErrors(errors);
-
-        if (Object.keys(errors).length === 0) {
-            const userInfo = {
-                fullName,
-                phoneNumber,
-                email,
-                address,
-                content,
-            };
-            localStorage.setItem('userInfo', JSON.stringify(userInfo));
-
-            router.push('/InfomationOder');
-        }
+        router.push('/InfomationOder');
     };
 
     return (
@@ -172,62 +182,53 @@ const CartPage = () => {
                             <div className="flex flex-wrap -mx-2 mb-4">
                                 {/* FullName Field */}
                                 <div className="w-1/2 px-2 mb-4">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Họ và tên <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Họ và tên"
-                                        value={fullName}
-                                        onChange={handleFullNameChange}
-                                        className={`w-full p-2 border rounded ${
-                                            errors.fullName ? 'border-red-500' : ''
-                                        }`}
+                                    <InputProfileField
+                                        id="fullName"
+                                        label="Họ và Tên"
+                                        value={userData?.fullName}
+                                        isEditable={editStates.fullName}
+                                        onChange={(e) => handleChange('fullName', e.target.value)}
+                                        toggleEdit={() => handleEditClick('fullName')}
                                     />
-                                    {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
                                 </div>
 
                                 {/* PhoneNumber Field */}
                                 <div className="w-1/2 px-2 mb-4">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Số điện thoại <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        placeholder="Số điện thoại"
-                                        value={phoneNumber}
-                                        onChange={handlePhoneNumberChange}
-                                        className={`w-full p-2 border rounded ${
-                                            errors.phoneNumber ? 'border-red-500' : ''
-                                        }`}
+                                    <InputProfileField
+                                        id="phoneNumber"
+                                        label="Số điện thoại"
+                                        value={userData?.phoneNumber}
+                                        isEditable={editStates.phoneNumber}
+                                        onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                                        toggleEdit={() => handleEditClick('phoneNumber')}
                                     />
-                                    {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
                                 </div>
                             </div>
 
                             {/* Form fields */}
                             <div className="flex flex-wrap -mx-2 mb-4">
+
                                 {/* Email field */}
                                 <div className="w-1/2 px-2">
-                                    <label className="block text-sm font-medium text-gray-700">Email</label>
-                                    <input
-                                        type="email"
-                                        placeholder="Email"
-                                        className="w-full p-2 border rounded"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                    <InputProfileField
+                                        id="email"
+                                        label="Email"
+                                        value={userData?.email}
+                                        isEditable={editStates.email}
+                                        onChange={(e) => handleChange('email', e.target.value)}
+                                        toggleEdit={() => handleEditClick('email')}
                                     />
                                 </div>
 
                                 {/* Address field */}
                                 <div className="w-1/2 px-2">
-                                    <label className="block text-sm font-medium text-gray-700">Địa chỉ</label>
-                                    <input
-                                        type="text"
-                                        placeholder="Địa chỉ"
-                                        className="w-full p-2 border rounded"
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
+                                    <InputProfileField
+                                        id="address"
+                                        label="Địa chỉ"
+                                        value={userData?.address}
+                                        isEditable={editStates.address}
+                                        onChange={(e) => handleChange('address', e.target.value)}
+                                        toggleEdit={() => handleEditClick('address')}
                                     />
                                 </div>
                             </div>
@@ -242,6 +243,15 @@ const CartPage = () => {
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                 ></textarea>
+                            </div>
+
+                            <div>
+                                <button
+                                    onClick={handleUpdateUser}
+                                    className="inline-flex justify-center rounded-md border border-transparent bg-[#2B92E4] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#37709e] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                >
+                                    Sửa thông tin
+                                </button>
                             </div>
                         </div>
 

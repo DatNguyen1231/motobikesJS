@@ -154,7 +154,7 @@ export const addToCart = async (productId, quantity) => {
 
     try {
         const response = await axiosInstance.post('user/shopping-cart/add-to-cart', cartData, {});
-       
+
         return {
             data: response.data,
         };
@@ -181,18 +181,42 @@ export const getCartByUser = async () => {
     }
 };
 
-export const getAllCartOrder = async () => {
+export const getAllCartOrder = async (status) => {
     try {
-        const response = await axiosInstance.post('/user/shopping-cart/get-all', {});
+        const response = await axiosInstance.post(`/user/shopping-cart/get-all-oder/${status}`, {});
         return {
-             success: true,
+            success: true,
             carts: response.data,
         };
     } catch (error) {
         return {
-             success: false,
+            success: false,
             message: error.response ? error.response.data.message : 'An error occurred',
         };
+    }
+};
+
+// Confirm OTP
+export const getAllRevenueCart = async (firstDay, lastDay, status) => {
+    // Create form data
+    const formData = new URLSearchParams();
+    formData.append('firstDay', firstDay);
+    formData.append('lastDay', lastDay);
+    formData.append('status', status);
+
+    try {
+        // Send request
+        const response = await axiosInstance.post('/user/shopping-cart/get-revenue-by-day', formData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        });
+
+        console.log(response.data);
+        return { carts: response.data };
+        // Handle response
+    } catch (error) {
+        throw new Error(error.response ? error.response.data.messenger : 'Có lỗi xảy ra, vui lòng thử lại sau.');
     }
 };
 
@@ -378,7 +402,7 @@ export const payment = async (paymentData) => {
 export const approveTheOrder = async (idCart) => {
     try {
         const response = await axiosInstance.post(`/user/shopping-cart/approve-the-order/${idCart}`);
-      
+
         console.log(response);
         return {
             data: response.data,
@@ -394,7 +418,7 @@ export const approveTheOrder = async (idCart) => {
 export const cancelTheOrder = async (idCart) => {
     try {
         const response = await axiosInstance.post(`/user/shopping-cart/cancel-the-order/${idCart}`);
-      
+
         console.log(response);
         return {
             data: response.data,
