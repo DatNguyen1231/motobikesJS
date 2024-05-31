@@ -46,6 +46,7 @@ export default function Nav({ setShowLoginModal, setShowRegisterModal }) {
     };
 
     return (
+
         <>
             <div className="grid w-full place-items-center rounded-lg p-6 pb-7 lg:overflow-visible">
                 <div className="-m-7 max-h-[768px] w-[calc(100%+48px)]">
@@ -123,6 +124,12 @@ export default function Nav({ setShowLoginModal, setShowRegisterModal }) {
                                                         <Link href={'/ProfilePage'}>
                                                             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                                                                 Xem hồ sơ
+                                                            </li>
+                                                        </Link>
+
+                                                        <Link href={'/OrderHistory'}>
+                                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                                Đơn hàng đã mua
                                                             </li>
                                                         </Link>
                                                         {/* Admin Button */}

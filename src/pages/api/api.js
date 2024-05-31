@@ -29,7 +29,7 @@ export const auth_login = async (username, password) => {
 export const setRegisterData = async (data) => {
     try {
         const response = await axiosInstance.post('/register', data);
-        return response;
+        return response.data;
     } catch (error) {
         return {
             success: false,
@@ -104,8 +104,7 @@ export const AccessoriesData = async () => {
 
     try {
         const response = await axiosInstance.get(`/product/get-by-id-type/${pageNumber}/${pageSize}/${sortBy}`);
-        const data = response.data;
-        const products = data.productSomeReponseDtos;
+        const products = response.data.productSomeReponseDtos;
 
         return products;
     } catch (error) {
@@ -132,6 +131,17 @@ export const ReviewsData = async (productId) => {
         return null;
     }
 };
+//add rivew
+export const addReviews = async (data) => {
+    try {
+        const response = await axiosInstance.post(`/reviews/add`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error adding review:", error);
+        return null;
+    }
+};
+
 // data page product
 export const dataPageProduct = async (link, currentPage, type, sort) => {
     try {
@@ -168,7 +178,7 @@ export const addToCart = async (productId, quantity) => {
 // Get the cart for the logged-in user
 export const getCartByUser = async () => {
     try {
-        const response = await axiosInstance.post('/user/shopping-cart/get-cart-by-user', {});
+        const response = await axiosInstance.post('/user/shopping-cart/get-cart-by-user/', {});
         return {
             success: true,
             cart: response.data,
@@ -181,6 +191,20 @@ export const getCartByUser = async () => {
     }
 };
 
+export const getCartByUserAndStatus = async (status) => {
+    try {
+        const response = await axiosInstance.post(`/user/shopping-cart/get-cart-by-user/${status}`, {});
+        return {
+            success: true,
+            carts: response.data,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response ? error.response.data.message : 'An error occurred',
+        };
+    }
+};
 export const getAllCartOrder = async (status) => {
     try {
         const response = await axiosInstance.post(`/user/shopping-cart/get-all-oder/${status}`, {});
@@ -251,6 +275,18 @@ export const getdataAdmin = async (type, curr) => {
         return [];
     }
 };
+
+// Accessories Products API
+export const getAllUser = async (pageNumber, pageSize, idRole) => {
+
+    try {
+        const response = await axiosInstance.get(`/get-all-user/${pageNumber}/${pageSize}/${idRole}`);
+        return response.data;
+    } catch (error) {
+        return [];
+    }
+};
+
 
 // Add Product
 export const addProduct = async (productData) => {
@@ -469,6 +505,53 @@ export const getUserInfo = async () => {
         return {
             success: false,
             message: error.response ? error.response.data.message : 'Failed to fetch user information.',
+        };
+    }
+};
+// Delete Product
+export const deleteUser = async (idUser) => {
+    try {
+        const response = await axiosInstance.delete(`/delete-by-user/${idUser}`);
+        console.log(response.data)
+        if (response.status === 200 || response.status === 204) {
+            return {
+                success: true,
+                message: response.data.messenger,
+            };
+        } else if (response.status === 201) {
+            return {
+                success: false,
+                message: response.data.messenger,
+            };
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response ? error.response.data.message : 'Đã xảy ra lỗi khi xoá sản phẩm!',
+        };
+    }
+};
+
+// Delete Product
+export const lockUser = async (idUser) => {
+    try {
+        const response = await axiosInstance.post(`/lock-account/${idUser}`);
+        console.log(response.data)
+        if (response.status === 200 || response.status === 204) {
+            return {
+                success: true,
+                message: response.data.messenger,
+            };
+        } else if (response.status === 201) {
+            return {
+                success: false,
+                message: response.data.messenger,
+            };
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response ? error.response.data.message : 'Đã xảy ra lỗi khi xoá sản phẩm!',
         };
     }
 };

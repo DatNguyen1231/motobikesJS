@@ -114,6 +114,7 @@ function ApproveOrders() {
                 Thành tiền (VNĐ)
               </th>
               <th className="border border-gray-300 px-4 py-2">Ảnh</th>
+              <th className="border border-gray-300 px-4 py-2">Thời gian</th>
               <th className="border border-gray-300 px-4 py-2">Chức năng</th>
             </tr>
           </thead>
@@ -163,7 +164,7 @@ function ApproveOrders() {
                       {product.productSomeReponseDto.name}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {product.quantityCart}
+                      X{product.quantityCart}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
                       {(product.quantityCart *
@@ -186,8 +187,20 @@ function ApproveOrders() {
                           objectFit: "contain",
                         }}
                       />
+
                     </td>
                     {index === 0 && (
+                      <React.Fragment>
+                        <td
+                          rowSpan={cart.shoppingCartDetailsDto.length}
+                          className="border border-gray-300 px-4 py-2"
+                        >
+                          {cart.paymentDate}
+                        </td>
+                      </React.Fragment>
+                    )}
+                    {index === 0 && (
+
                       <td
                         rowSpan={cart.shoppingCartDetailsDto.length}
                         className="border border-gray-300 px-4 py-2"
@@ -210,6 +223,7 @@ function ApproveOrders() {
                         </div>
                       </td>
                     )}
+
                   </tr>
                 ))}
               </React.Fragment>

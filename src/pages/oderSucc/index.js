@@ -1,11 +1,12 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { paymentSuccess } from '../api/api';
-
+import { paymentSuccess, addReviews } from '../api/api';
+import { IoIosStar, IoIosStarOutline, IoIosStarHalf } from 'react-icons/io';
+import { Button } from "@material-tailwind/react";
 function OderSucc() {
     const [totalPrice, setTotalPrice] = useState('');
     const [dataProduct, setDataProduct] = useState([]);
-
+    const [ratings, setRatings] = useState({}); // State lưu trữ đánh giá của từng sản phẩm
     //mac dinh
     useEffect(() => {
         paymentSuccess().then((data) => {
@@ -13,6 +14,44 @@ function OderSucc() {
             setTotalPrice(data?.totalPrice);
         });
     }, []);
+
+    // Hàm xử lý sự kiện khi người dùng thay đổi đánh giá cho một sản phẩm
+    const handleRatingChange = (productId, rating) => {
+        setRatings(prevRatings => ({
+            ...prevRatings,
+            [productId]: rating
+        }));
+
+    };
+    // Hàm render các biểu tượng sao dựa trên đánh giá của sản phẩm
+    const renderStars = (productId, numberStars) => {
+        const rating = ratings[productId] || 0; // Lấy đánh giá của sản phẩm, nếu không có thì mặc định là 0
+        const stars = [];
+        for (let i = 1; i <= numberStars; i++) {
+            if (i <= rating) {
+                stars.push(<IoIosStar key={i} className="text-yellow-500 text-2xl" onClick={() => handleRatingChange(productId, i)} />);
+            } else {
+                stars.push(<IoIosStarOutline key={i} className="text-yellow-500 text-2xl" onClick={() => handleRatingChange(productId, i)} />);
+            }
+        }
+        return stars;
+    };
+
+    //send riviews
+    const handleSendReview = async (idCartDetails) => {
+        if (ratings[idCartDetails] === null || ratings[idCartDetails] === undefined) {
+            alert("Vui lý chọn đánh giá");
+            return;
+        }
+        const SendData = {
+            idCartDetail: idCartDetails,
+            rating: ratings[idCartDetails],
+            comment: "đơn hàng tuyệt vời"
+        }
+        const response = await addReviews(SendData);
+        alert(response.messenger);
+
+    };
 
     return (
         <div className="oder-succ">
@@ -41,33 +80,45 @@ function OderSucc() {
                                 <tr>
                                     <th
                                         scope="col"
-                                        className="px-6 py-3 text-lg uppercase tracking-wider "
+                                        className="px-6 py-3 text-base uppercase tracking-wider "
                                     >
                                         Ảnh
                                     </th>
                                     <th
                                         scope="col"
-                                        className="px-6 py-3 text-center text-lg uppercase tracking-wider "
+                                        className="px-6 py-3 text-center text-base uppercase tracking-wider "
                                     >
                                         Tên sản phẩm
                                     </th>
                                     <th
                                         scope="col"
-                                        className="px-6 py-3 text-center text-lg uppercase tracking-wider"
+                                        className="px-6 py-3 text-center text-base uppercase tracking-wider"
                                     >
                                         Giá
                                     </th>
                                     <th
                                         scope="col"
-                                        className="px-6 py-3 text-center text-lg uppercase tracking-wider"
+                                        className="px-6 py-3 text-center text-base uppercase tracking-wider"
                                     >
                                         Số lượng
                                     </th>
                                     <th
                                         scope="col"
-                                        className="px-6 py-3 text-center text-lg uppercase tracking-wider"
+                                        className="px-6 py-3 text-center text-base uppercase tracking-wider"
                                     >
                                         Tổng tiền
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-center text-base uppercase tracking-wider"
+                                    >
+                                        Đánh giá
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-center text-base uppercase tracking-wider"
+                                    >
+                                        Chức năng
                                     </th>
                                 </tr>
                             </thead>
@@ -89,19 +140,19 @@ function OderSucc() {
 
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center text-lg">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center text-base">
                                                 {product.productSomeReponseDto.name}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center text-lg">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center text-base">
                                                 {product.productSomeReponseDto.newPrice
                                                     .toString()
                                                     .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}{" "}
                                                 VNĐ
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center text-lg">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center text-base">
                                                 {product.quantityCart}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center text-lg">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center text-base">
                                                 {(
                                                     product.quantityCart *
                                                     product.productSomeReponseDto.newPrice
@@ -109,6 +160,20 @@ function OderSucc() {
                                                     .toString()
                                                     .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}{" "}
                                                 VNĐ
+                                            </td>
+                                            <td>
+                                                <div className="flex items-center">
+                                                    {renderStars(product.id, 5)}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center text-base">
+                                                <Button
+                                                    color="blue"
+                                                    onClick={() => handleSendReview(product.id)}
+                                                >
+
+                                                    Gửi
+                                                </Button>
                                             </td>
                                         </tr>
                                     );

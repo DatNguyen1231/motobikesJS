@@ -34,7 +34,6 @@ function MyApp({ Component, pageProps }) {
                 <div className="flex-1">
                     <Component {...pageProps} />
                 </div>
-
                 {!noNavFooter && <Footer />}
             </div>
         </AuthProvider>

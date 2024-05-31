@@ -1,80 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { FaPlus, FaTrash, FaEdit, FaSearch } from "react-icons/fa";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
-import RowProduct from "../rowProduct";
-import { getdataAdmin, getdataAdminSearch } from "@/pages/api/api";
+import RowUser from "../rowUser";
+import { deleteUser, getAllUser, lockUser } from "@/pages/api/api";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
-import { deleteProduct } from "@/pages/api/api";
-
-const CustomerManagerment = ({ activeContent, changeContent }) => {
-    const [dataProduct, setDataProduct] = useState([]);
-    const [selectedProducts, setSelectedProducts] = useState([]);
-    const [selectAll, setSelectAll] = useState(false);
-    const [type, setType] = useState("1");
+import { FaSearch } from "react-icons/fa";
+const CustomerManagerment = ({ }) => {
+    const [dataUser, setDataUser] = useState([]);
+    const [type, setType] = useState("2");
     const [search, setSearch] = useState("");
     const [curr, setCurr] = useState(0);
-    const [selectedProduct, setSelectedProduct] = useState(null);
     const [totalPage, setTotalPage] = useState("");
-
+    const [triggerUpdate, setTriggerUpdate] = useState(false);
     useEffect(() => {
-        getdataAdmin(type, curr).then((e) => {
-            setDataProduct(e.productSomeReponseDtos);
-            setSelectAll(false);
-            setTotalPage(e.totalPages);
+        const data = localStorage.getItem("data");
+        if (data) {
+            setCarts(JSON.parse(data));
+        }
+        getAllUser(curr, 10, type).then((e) => {
+            setDataUser(e.userDTOS)
+            setTotalPage(e.totalPages)
+            console.log(dataUser)
         });
-    }, []);
+    }, [curr, type, triggerUpdate]);
 
-    // Handle select all
-    const handleSelectAll = (e) => {
-        if (e.target.checked) {
-            const newSelectedProducts = dataProduct.map((product) => product.id);
-            setSelectedProducts(newSelectedProducts);
-        } else {
-            setSelectedProducts([]);
-        }
-    };
-
-    const handleSelectProduct = (id) => {
-        if (selectedProducts.includes(id)) {
-            setSelectedProducts(selectedProducts.filter((item) => item !== id));
-        } else {
-            setSelectedProducts([...selectedProducts, id]);
-        }
-    };
-
-    useEffect(() => {
-        if (search.length > 0) {
-            getdataAdminSearch(curr, search).then((e) => {
-                setTotalPage(e.totalPages);
-                setDataProduct(e.productSomeReponseDtos);
-            });
-        } else {
-            getdataAdmin(type, curr).then((e) => {
-                setTotalPage(e.totalPages);
-                setDataProduct(e.productSomeReponseDtos);
-            });
-        }
-    }, [type, curr, search]);
-
-    // useEffect(() => {
-    //     const savedSelectedProducts = JSON.parse(localStorage.getItem('selectedProducts') || '[]');
-    //     setSelectedProducts(savedSelectedProducts);
-
-    //     if (search.length > 0) {
-    //         getdataAdminSearch(curr, search)
-    //             .then((e) => {
-    //                 setTotalPage(e.totalPages)
-    //                 setDataProduct(e.productSomeReponseDtos)
-    //             })
-    //     }
-    //     else {
-    //         getdataAdmin(type, curr)
-    //             .then((e) => {
-    //                 setTotalPage(e.totalPages)
-    //                 setDataProduct(e.productSomeReponseDtos)
-    //             })
-    //     }
-    // }, [selectedProducts, dataProduct]);
 
     const incre = () => {
         if (curr + 1 < totalPage) {
@@ -86,80 +33,50 @@ const CustomerManagerment = ({ activeContent, changeContent }) => {
         setCurr(curr > 0 ? curr - 1 : 0);
     };
 
-    // Get title
-    const getTitle = () => {
-        switch (activeContent) {
-            case "products":
-                return (
-                    <span className="flex justify-center items-center font-thin text-xl">
-                        Sản phẩm <MdKeyboardDoubleArrowRight className="mx-2 font-thin" />{" "}
-                        Danh sách sản phẩm
-                    </span>
-                );
-            case "addProduct":
-                return (
-                    <span>
-                        Sản phẩm <MdKeyboardDoubleArrowRight className="mx-2 font-thin" />{" "}
-                        Thêm sản phẩm
-                    </span>
-                );
-            default:
-                return "Sản phẩm";
-        }
-    };
-
     // Function to handle product deletion
-    const handleDeleteProduct = async (productId) => {
-        const response = await deleteProduct(productId);
+    const handleDeleteUser = async (idUser) => {
+        const response = await deleteUser(idUser);
         if (response.success) {
             // Remove the deleted product from the state to update UI
-            setDataProduct(dataProduct.filter((product) => product.id !== productId));
-            alert("Product deleted successfully");
+            setDataUser(dataUser?.filter((user) => user.id != idUser));
+            alert(response.message);
         } else {
-            alert("Failed to delete product: " + response.message);
+            alert(response.message);
         }
+    };
+    const handleLockUser = async (idUser) => {
+        const response = await lockUser(idUser);
+
+        alert(response.message);
+        setTriggerUpdate(prevState => !prevState);
     };
 
     return (
         <div>
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-                <h2>{getTitle()}</h2>
-            </div>
+
+
             <div
                 style={{ height: "100%" }}
                 className="bg-white p-4 px-10 h-[calc(100vh-150px)]"
             >
-                <div className="flex justify-between items-center mb-4">
-                    {/* Left-side buttons and dropdown */}
-                    <div className="flex items-center">
-                        <button
-                            onClick={() => changeContent("addProduct")}
-                            className="mr-4 flex items-center px-3 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-600"
-                        >
-                            <FaPlus className="mr-1" /> Thêm danh mục
-                        </button>
-                        <button
-                            //   onClick={handleDeleteSelectedProducts}
-                            className="mr-4 flex items-center px-3 py-1 rounded-md bg-red-500 text-white hover:bg-red-600"
-                        >
-                            <FaTrash className="mr-1" /> Xoá tất cả
-                        </button>
-                    </div>
-                </div>
+                <header>
+                    <h1 className="text-3xl font-bold text-center mb-4">
+                        Quản lý khách hàng
+                    </h1>
+                </header>
 
                 <div className="flex justify-between items-center mb-4">
                     {/* Sort */}
                     <div className="flex items-center">
-                        <h2 className="mr-4">Danh mục</h2>
+                        <h2 className="mr-4">Tài khoản</h2>
                         <select
                             onChange={(e) => {
                                 setType(e.target.value);
                             }}
                             className="px-3 py-2 border rounded-md mr-4"
                         >
-                            <option value="1">Xe máy</option>
-                            <option value="2">Phụ tùng</option>
+                            <option value="2">User</option>
+                            <option value="1">Admin</option>
                         </select>
                     </div>
 
@@ -181,44 +98,26 @@ const CustomerManagerment = ({ activeContent, changeContent }) => {
                 <table className="w-full border-collapse border border-gray-300 text-center">
                     <thead>
                         <tr className="bg-gray-200">
-                            <th className="border border-gray-300 px-4 py-2">
-                                <input
-                                    type="checkbox"
-                                    checked={selectAll}
-                                    onChange={handleSelectAll}
-                                />
-                            </th>
-                            <th className="border border-gray-300 px-4 py-2">Mã Sản Phẩm</th>
-                            <th className="border border-gray-300 px-4 py-2">Tên Sản Phẩm</th>
-                            <th className="border border-gray-300 px-4 py-2">Ảnh</th>
-                            <th className="border border-gray-300 px-4 py-2">Số lượng</th>
-                            <th className="border border-gray-300 px-4 py-2">Tình trạng</th>
-                            <th className="border border-gray-300 px-4 py-2">
-                                Giá gốc (VNĐ)
-                            </th>
-                            <th className="border border-gray-300 px-4 py-2">
-                                Phần trăm giảm giá (%)
-                            </th>
-                            <th className="border border-gray-300 px-4 py-2">
-                                Giá giảm giá (VNĐ)
-                            </th>
-                            <th className="border border-gray-300 px-4 py-2">Danh mục</th>
+
+                            <th className="border border-gray-300 px-4 py-2">Mã Khách hàng</th>
+                            <th className="border border-gray-300 px-4 py-2">Tài khoản</th>
+                            <th className="border border-gray-300 px-4 py-2">Tên khách hàng</th>
+                            <th className="border border-gray-300 px-4 py-2">Email</th>
+                            <th className="border border-gray-300 px-4 py-2">Số điện thoại</th>
+                            <th className="border border-gray-300 px-4 py-2">Địa chỉ</th>
+                            <th className="border border-gray-300 px-4 py-2">Loại tài khoản</th>
+                            <th className="border border-gray-300 px-4 py-2">Trạng thái</th>
                             <th className="border border-gray-300 px-4 py-2">Chức năng</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {dataProduct &&
-                            dataProduct.map((element) => (
-                                <RowProduct
+                        {dataUser &&
+                            dataUser?.map((element) => (
+                                <RowUser
                                     key={element.id}
-                                    product={element}
-                                    onDelete={handleDeleteProduct}
-                                    onSelect={(id) => {
-                                        setSelectedProduct(id);
-                                        handleSelectProduct(id);
-                                    }}
-                                    isSelected={selectedProducts.includes(element.id)}
-                                    changeContent={changeContent}
+                                    user={element}
+                                    onDelete={handleDeleteUser}
+                                    onLock={handleLockUser}
                                 />
                             ))}
                     </tbody>

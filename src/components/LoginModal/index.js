@@ -42,7 +42,7 @@ const LoginModal = ({ setShowModal, setShowRegisterModal }) => {
             if (result.messenger.includes('mật khẩu')) {
                 setError((currentErrors) => ({ ...currentErrors, password: result.messenger }));
             } else {
-                setError((currentErrors) => ({ ...currentErrors, password: '' }));
+                setError((currentErrors) => ({ ...currentErrors, password: result.messenger }));
             }
         }
 

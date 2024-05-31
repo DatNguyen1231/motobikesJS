@@ -30,6 +30,7 @@ export default function Home() {
             <Head>
                 <title>Motorcycle Ecommerce</title>
             </Head>
+
             <main className="-z-1">
                 {/* Slide Show */}
                 <div>
