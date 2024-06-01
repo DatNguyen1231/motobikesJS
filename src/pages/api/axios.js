@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: 'https://cgdn-springboot-jwt-mysql-master-production.up.railway.app',
 });
 
 axiosInstance.interceptors.request.use(
